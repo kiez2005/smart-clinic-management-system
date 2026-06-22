@@ -16,4 +16,19 @@ public class Doctor {
     private List<String> availableTimes;
 
     // getters, setters
+    @GetMapping("/availability/{doctorId}")
+public ResponseEntity<?> getAvailability(
+        @PathVariable Long doctorId,
+        @RequestParam String date,
+        @RequestHeader("Authorization") String token) {
+
+    if (!tokenService.validateToken(token)) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Invalid token");
+    }
+
+    List<String> slots =
+            doctorService.getAvailableSlots(doctorId, date);
+
+    return ResponseEntity.ok(slots);
 }
